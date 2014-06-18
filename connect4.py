@@ -5,6 +5,7 @@
 """
 
 import random
+import copy
 
 def printboard(board):
     print "   1   2   3   4    5   6   7"
@@ -20,7 +21,7 @@ def printboard(board):
     print "  ---+---+---+---+---+---+---+"
     print "6: "+board[5][0]+" | "+board[5][1]+" | "+board[5][2]+" | "+board[5][3]+" | "+board [5][4]+" | "+board [5][5]+" | "+board [5][6]
     print "  ---+---+---+---+---+---+---+"
-    print "7: "+board[6][0]+" | "+board[6][1]+" | "+board[6][2]+" | "+board[6][3]+" | "+board [6][4]+" | "+board [6][5]+" | "+board [6][6]
+    print "7: "+board[6][0]+" | "+board[6][1]+" | "+board[6][2]+" | "+board[6][3]+" | "+board [6][4]+" | "+board [6][5]+" | "+board [6][6]+"\n"
     
 def check4win(board):
     #check rows
@@ -65,9 +66,10 @@ def findvalidrow(board,col):
 def playhuman(board):
     inputflag = True    
     while inputflag:
-        col = input("Desired column (1-7) for next move: ")
+        col = raw_input("Desired column (1-7) for next move: ")
         
-        if col.isdigit:
+        if col.isdigit():
+            col = int(col)
             if 1<=col<=7:
                 validrow = findvalidrow(board,col-1)
                 if validrow>-1:
@@ -91,9 +93,9 @@ def findvalidmoves(board):
     validmoves = [(i,j) for (i,j) in zip(rows,cols) if i>-1]
     return validmoves
     
-def minimax(board,player,depth,maxdepth):
+def minimax(board,player,depth,maxDepth):
     bestMove = []
-    dupboard = board
+    dupboard = copy.deepcopy(board)
     validmoves = findvalidmoves(dupboard)        
     
     if player=="computer":
@@ -105,9 +107,9 @@ def minimax(board,player,depth,maxdepth):
         tile = "X"
         enemy = "computer"
     
-    if depth==maxdepth:
-        score = 
-        return score, null
+    if depth==maxDepth:
+        score = getScore(dupboard,player)
+        return score, None
     
     for move in validmoves:
         row = move[0]
@@ -117,46 +119,55 @@ def minimax(board,player,depth,maxdepth):
         score = minimax(dupboard,enemy,depth+1,maxDepth)
         
         if player=="computer":
-            if score>bestscore:
+            if score>bestScore:
                 bestScore = score
                 bestMove = move
         else: 
-            if score<bestscore:
+            if score<bestScore:
                 bestScore = score
                 bestMove = move 
     
     return bestScore, bestMove
+
+def getScore(board,player):
+    return random.randint(1,100)
         
 def playcomputer(board):
     #get valid moves
     validmoves = findvalidmoves(board)
     
     #check/score moves
-    bestmove = []
+    bestMove = []
     for move in validmoves:
         row = move[0]
         col = move[1]
         
         board[row][col] = "O"
         if check4win(board)=="O":
-            bestmove = move
+            bestMove = move
             break
         else:
             board[row][col] = ""
     
-    if bestmove==[]:
-        minimax(board, ? , ?)
-            
-            #score moves ? <--add stuff here
-            
-            movescores.append(score)
+    if bestMove==[]:
+        for move in validmoves:
+            row = move[0]
+            col = move[1]
+            board[row][col] = "X"
+            if check4win(board)=="X":
+                bestMove = move
+                board[row][col] = "O"
+                break
+            else:
+                board[row][col] = ""
     
-    #choose move with max score
-    if movescores<>[]:
-        indx = movescores.index(max(movescores))
-        bestmove = validmoves[indx]
+    if bestMove==[]:
+        bestScore, bestMove = minimax(board,"computer",0,2)
+        row = bestMove[0]
+        col = bestMove[1]
+        board[row][col] = "O"
         
-    print "The computer has chosen row=",str(bestmove[0])," and col=",str(bestmove[1])," \n"
+    print "The computer has chosen row=",str(bestMove[0])," and col=",str(bestMove[1])," \n"
 
 def main():
     #create board
@@ -212,5 +223,6 @@ def main():
             nowinordraw = False
             break
             
-                    
+if __name__ == '__main__':
+    main()                    
 
