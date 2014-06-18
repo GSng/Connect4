@@ -54,31 +54,85 @@ def check4win(board):
     # if no winner
     return ""
 
+def findvalidrow(board,col):
+    validrow = -1    
+    for row in range(6,-1,-1):
+        if board[row][col]=="":
+            validrow = row
+            break
+    return validrow
+
 def playhuman(board):
     inputflag = True    
     while inputflag:
-        row = input("Desired row (1-7) for next move: ")
         col = input("Desired column (1-7) for next move: ")
         
-        if row.isdigit() and col.isdigit:
-            if 1<=row<=7 and 1<=col<=7:
-                if board[row-1][col-1]=="":
-                    board[row-1][col-1] = "X"                
+        if col.isdigit:
+            if 1<=col<=7:
+                validrow = findvalidrow(board,col-1)
+                if validrow>-1:
+                    board[validrow][col-1] = "X"                
                     inputflag = False                    
                     break
                 else:
-                    print "row/column occupied. Try Again!\n"
+                    print "Column filled. Try Again!\n"
             else:
-                print "Invalid row/column. Try Again!\n"
+                print "Invalid column #. Try Again!\n"
         else: 
             print "Integer input only. Try Again!\n"
-            
+
+def findvalidmoves(board):
+    rows = []
+    cols = range(7)    
+    for col in cols:
+        row = findvalidrow(board,col)
+        rows.append(row) 
+    
+    validmoves = [(i,j) for (i,j) in zip(rows,cols) if i>-1]
+    return validmoves
+    
+def minimax(board,player,depth,maxdepth):
+    bestMove = []
+    dupboard = board
+    validmoves = findvalidmoves(dupboard)        
+    
+    if player=="computer":
+        bestScore = -999999999
+        tile = "O"
+        enemy = "human"
+    else:
+        bestScore =  999999999
+        tile = "X"
+        enemy = "computer"
+    
+    if depth==maxdepth:
+        score = 
+        return score, null
+    
+    for move in validmoves:
+        row = move[0]
+        col = move[1]
+        dupboard[row][col] = tile    
+        
+        score = minimax(dupboard,enemy,depth+1,maxDepth)
+        
+        if player=="computer":
+            if score>bestscore:
+                bestScore = score
+                bestMove = move
+        else: 
+            if score<bestscore:
+                bestScore = score
+                bestMove = move 
+    
+    return bestScore, bestMove
+        
 def playcomputer(board):
     #get valid moves
-    validmoves = [(row,col) for row in range(6) for col in range(6) if board[row,col]==""]
+    validmoves = findvalidmoves(board)
     
     #check/score moves
-    movescores = []
+    bestmove = []
     for move in validmoves:
         row = move[0]
         col = move[1]
@@ -89,6 +143,9 @@ def playcomputer(board):
             break
         else:
             board[row][col] = ""
+    
+    if bestmove==[]:
+        minimax(board, ? , ?)
             
             #score moves ? <--add stuff here
             
